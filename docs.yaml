@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: mystorekeeper
+  description: msk backend application api documentation
+  version: 1.0.0
+
+servers:
+
+  - url: http://api.example.com/v1
+    description: Stage url
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+        
+  - url: http://staging-api.com
+    description: Prod Url
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+      
+paths:
+  /signup:
+    post:
+      summary: Create an account
+      description: A route to create new account
+      parameters:
+        - in: header
+          name: env
+          required: true
+          schema:
+            type: string
+          description: key to authenticate request to server
+        - in: header
+          name: apikey
+          required: true
+          schema:
+            type: string
+          description: key to authenticate request to server
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription_model:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                organization_model:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    logo:
+                      type: string
+                    address:
+                      type: string
+                    orgunique:
+                      type: string
+                employees_models:
+                  properties:
+                    profile:
+                      type: string
+                    fullname:
+                      type: string
+                    email:
+                      type: string
+                    contact:
+                      type: string
+                login_model:
+                  type: object
+                  properties:
+                    password:
+                      type: string
+      responses:
+        '200':
+          description: response from server
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      default: ["contact exists", "email exists", "user added", "error"]
+
+
+          
+          

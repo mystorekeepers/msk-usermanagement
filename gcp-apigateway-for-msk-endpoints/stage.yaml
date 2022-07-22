@@ -1,0 +1,330 @@
+swagger: '2.0'
+info:
+  title: mystorekeeper
+  description: mystorekeeper production api doc
+  version: 1.0.0
+schemes:
+  - https
+basePath: /api/v1
+tags:
+  - name: Notifications
+    description: Send sms and email notification
+  - name: OTP
+    description: OTP operations for mystorekeeper
+produces:
+  - application/json
+paths:
+
+#######################################################################################################################################################
+# (3). DELETE OTP
+#######################################################################################################################################################
+  
+  /deleteotp:
+    post:
+      tags:
+        - OTP
+      summary: A route to delete otps
+      operationId: deleteotppost
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: deleteotp
+          schema:
+            type: object
+            properties: 
+              username:
+                type: string
+              otp_code:
+                type: string
+              date:
+                type: string
+              namespace:
+                type: string
+      x-google-backend: 
+        address: https://us-central1-mystorekeeper.cloudfunctions.net/msk-stage-delete-otp
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: success responds from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        500:
+          description: when an error occures from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        404:
+          description: When route or resource not found
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+
+    options:
+      tags:
+        - OTP
+      summary: A route to delete otps
+      operationId: deleteotoptions
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: deleteotp
+          schema:
+            type: object
+            properties: 
+              username:
+                type: string
+              otp_code:
+                type: string
+              date:
+                type: string
+              namespace:
+                type: string
+      x-google-backend: 
+        address: https://us-central1-mystorekeeper.cloudfunctions.net/msk-stage-delete-otp
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: success responds from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        500:
+          description: when an error occures from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        404:
+          description: When route or resource not found
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+                
+#######################################################################################################################################################
+# (2). EMAIL
+#######################################################################################################################################################
+  
+  /email:
+    post:
+      tags:
+        - Notifications
+      summary: A route to send email notification
+      operationId: emailpost
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: env
+          type: string
+          required: true
+        - in: body
+          name: sms
+          schema:
+            type: object
+            properties: 
+              mail:
+                type: string
+              subject:
+                type: string
+              message:
+                type: string
+      x-google-backend: 
+        address: https://stage-msk-sms-email-hawnasvexa-uc.a.run.app/email
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: success responds from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        500:
+          description: when an error occures from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        404:
+          description: When route or resource not found
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+    options:
+      tags:
+        - Notifications
+      summary: A route to send email notification
+      operationId: emailoptions
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: env
+          type: string
+          required: true
+        - in: body
+          name: sms
+          schema:
+            type: object
+            properties: 
+              mail:
+                type: string
+              subject:
+                type: string
+              message:
+                type: string
+      x-google-backend: 
+        address: https://stage-msk-sms-email-hawnasvexa-uc.a.run.app/email
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: success responds from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        500:
+          description: when an error occures from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        404:
+          description: When route or resource not found
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+
+#######################################################################################################################################################
+# (1). SMS
+#######################################################################################################################################################
+
+  /sms:
+    post:
+      tags:
+        - Notifications
+      summary: A route to send sms notification
+      operationId: smspost
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: env
+          type: string
+          required: true
+        - in: body
+          name: sms
+          schema:
+            type: object
+            properties: 
+              sender:
+                type: string
+              recipient:
+                type: string
+              message:
+                type: string    
+      x-google-backend: 
+        address: https://stage-msk-sms-email-hawnasvexa-uc.a.run.app/sms
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: success responds from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        500:
+          description: when an error occures from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        404:
+          description: When route or resource not found
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+    options:
+      tags:
+        - Notifications
+      summary: A route to send sms notification
+      operationId: smsoptions
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: env
+          type: string
+          required: true
+        - in: body
+          name: sms
+          schema:
+            type: object
+            properties: 
+              sender:
+                type: string
+              recipient:
+                type: string
+              message:
+                type: string    
+      x-google-backend: 
+        address: https://stage-msk-sms-email-hawnasvexa-uc.a.run.app/sms
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: success responds from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        500:
+          description: when an error occures from server
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+        404:
+          description: When route or resource not found
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"

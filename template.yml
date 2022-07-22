@@ -1,0 +1,104 @@
+ parameters:
+
+  - name: env
+    type: string
+    default: "dev"
+    displayName: Environment
+
+  - name: workingPath
+    type: string
+    default: 'az-storage-account'
+    displayName: Default Working Path
+
+  - name: backendServiceArm
+    type: string
+    default: 'msk-pipeline'
+    displayName: Working directory
+  
+  - name: backendAzureRmResourceGroupName
+    type: string
+    default: 'msk-configurations-rg'
+    displayName: Backend Resource Group
+
+  - name: backendAzureRmStorageAccountName
+    type: string
+    default: 'mskconfigurations48'
+    displayName: Backend Storage Account
+
+  - name: backendAzureRmKey
+    type: string
+    default: stage.tfstate
+
+  - name: continueOnError
+    type: boolean
+    default: false
+  
+  - name: JobName
+    type: string
+ 
+  - name: WhatToDeploy
+    type: string
+  
+  - name: shouldIDeployThisResource
+    type: boolean
+    default: false
+
+  - name: commandOptions
+    type: string
+
+  - name: terraformVersion
+    type: string
+    default: '1.1.9'
+
+ jobs:
+
+    - job: ${{parameters.JobName}}
+      condition: eq(${{parameters.shouldIDeployThisResource}}, true)
+      displayName: Deploy ${{parameters.WhatToDeploy}} On ${{parameters.env}} Environment
+      steps:
+        
+        - task: TerraformInstaller@0
+          displayName: Install Terraform
+          inputs:
+            terraformVersion: ${{parameters.terraformVersion}}
+        
+        - task: TerraformTaskV3@3
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/${{parameters.workingPath}}/${{parameters.env}}'
+            backendServiceArm: ${{parameters.backendServiceArm}}
+            backendAzureRmResourceGroupName: ${{parameters.backendAzureRmResourceGroupName}}
+            backendAzureRmStorageAccountName: ${{parameters.backendAzureRmStorageAccountName}}
+            backendAzureRmContainerName: '${{parameters.workingPath}}'
+            backendAzureRmKey: ${{parameters.backendAzureRmKey}}
+            
+        - task: TerraformTaskV3@3
+          continueOnError: ${{parameters.continueOnError}}
+          condition: succeeded()
+          displayName: validate ${{parameters.WhatToDeploy}} ${{parameters.env}} terraform configuration files
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/${{parameters.workingPath}}/${{parameters.env}}'
+            
+        - task: TerraformTaskV3@3
+          continueOnError: ${{parameters.continueOnError}}
+          condition: succeeded()
+          displayName: plan ${{parameters.WhatToDeploy}} ${{parameters.env}} terraform configuration files
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/${{parameters.workingPath}}/${{parameters.env}}'
+            commandOptions: ${{parameters.commandOptions}}
+            environmentServiceNameAzureRM: '${{parameters.backendServiceArm}}'
+            
+        - task: TerraformTaskV3@3
+          continueOnError: ${{parameters.continueOnError}}
+          displayName: apply to deploy ${{parameters.WhatToDeploy}} ${{parameters.env}} resources
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/${{parameters.workingPath}}/${{parameters.env}}'
+            environmentServiceNameAzureRM: '${{parameters.backendServiceArm}}'
+            commandOptions: ${{parameters.commandOptions}}
